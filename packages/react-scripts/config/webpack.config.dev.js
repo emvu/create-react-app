@@ -114,7 +114,7 @@ module.exports = {
       // Process JS with Babel.
       {
         test: /\.(js|jsx)$/,
-        include: paths.appSrc,
+        exclude: /node_modules/,
         loader: 'babel',
         query: {
           // @remove-on-eject-begin

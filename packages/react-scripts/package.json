@@ -1,14 +1,14 @@
 {
-  "name": "react-scripts",
-  "version": "0.7.0",
-  "description": "Configuration and scripts for Create React App.",
-  "repository": "facebookincubator/create-react-app",
+  "name": "emvu-react-scripts",
+  "version": "110.7.0",
+  "description": "Fork of configuration and scripts for Create React App.",
+  "repository": "emvu/create-react-app",
   "license": "BSD-3-Clause",
   "engines": {
     "node": ">=4"
   },
   "bugs": {
-    "url": "https://github.com/facebookincubator/create-react-app/issues"
+    "url": "https://github.com/emvu/create-react-app/issues"
   },
   "files": [
     ".babelrc",
