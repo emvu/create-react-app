@@ -62,7 +62,7 @@ module.exports = {
   bail: true,
   // We generate sourcemaps in production. This is slow but gives good results.
   // You can exclude the *.map files from the build during deployment.
-  // devtool: 'source-map', // removed because of: Error: "/components/..." is not in the SourceMap.
+  devtool: null, // removed because of: Error: "/components/..." is not in the SourceMap.
   // In production, we only want to load the polyfills and the app code.
   entry: [
     require.resolve('./polyfills'),
@@ -238,6 +238,7 @@ module.exports = {
     new webpack.optimize.DedupePlugin(),
     // Minify the code.
     new webpack.optimize.UglifyJsPlugin({
+      sourceMap: false,
       compress: {
         screw_ie8: true, // React doesn't support IE8
         warnings: false
