@@ -62,7 +62,7 @@ module.exports = {
   bail: true,
   // We generate sourcemaps in production. This is slow but gives good results.
   // You can exclude the *.map files from the build during deployment.
-  devtool: 'source-map',
+  devtool: null, // removed because of: Error: "/components/..." is not in the SourceMap.
   // In production, we only want to load the polyfills and the app code.
   entry: [
     require.resolve('./polyfills'),
@@ -119,12 +119,13 @@ module.exports = {
       // Process JS with Babel.
       {
         test: /\.(js|jsx)$/,
-        include: paths.appSrc,
+        exclude: /node_modules/,
         loader: 'babel',
         // @remove-on-eject-begin
         query: {
           babelrc: false,
           presets: [require.resolve('babel-preset-react-app')],
+          plugins: [require.resolve('babel-plugin-transform-decorators')],
         },
         // @remove-on-eject-end
       },
@@ -150,7 +151,7 @@ module.exports = {
         // Webpack 1.x uses Uglify plugin as a signal to minify *all* the assets
         // including CSS. This is confusing and will be removed in Webpack 2:
         // https://github.com/webpack/webpack/issues/283
-        loader: ExtractTextPlugin.extract('style', 'css?importLoaders=1&-autoprefixer!postcss')
+        loader: ExtractTextPlugin.extract('style', 'css?modules=1!importLoaders=1&-autoprefixer!postcss')
         // Note: this won't work without `new ExtractTextPlugin()` in `plugins`.
       },
       // JSON is not enabled by default in Webpack but both Node and Browserify
@@ -238,6 +239,7 @@ module.exports = {
     new webpack.optimize.DedupePlugin(),
     // Minify the code.
     new webpack.optimize.UglifyJsPlugin({
+      sourceMap: false,
       compress: {
         screw_ie8: true, // React doesn't support IE8
         warnings: false

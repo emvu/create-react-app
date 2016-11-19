@@ -1,14 +1,14 @@
 {
-  "name": "react-scripts",
-  "version": "0.7.0",
-  "description": "Configuration and scripts for Create React App.",
-  "repository": "facebookincubator/create-react-app",
+  "name": "@emvu/react-scripts",
+  "version": "0.0.3",
+  "description": "Fork of configuration and scripts for Create React App.",
+  "repository": "emvu/create-react-app",
   "license": "BSD-3-Clause",
   "engines": {
     "node": ">=4"
   },
   "bugs": {
-    "url": "https://github.com/facebookincubator/create-react-app/issues"
+    "url": "https://github.com/emvu/create-react-app/issues"
   },
   "files": [
     ".babelrc",
@@ -28,6 +28,7 @@
     "babel-eslint": "7.0.0",
     "babel-jest": "16.0.0",
     "babel-loader": "6.2.7",
+    "babel-plugin-transform-decorators": "^6.13.0",
     "babel-preset-react-app": "^1.0.0",
     "case-sensitive-paths-webpack-plugin": "1.1.4",
     "chalk": "1.1.3",
@@ -81,6 +82,7 @@
     "babel-eslint",
     "babel-jest",
     "babel-loader",
+    "babel-plugin-transform-decorators",
     "babel-preset-react-app",
     "case-sensitive-paths-webpack-plugin",
     "chalk",
