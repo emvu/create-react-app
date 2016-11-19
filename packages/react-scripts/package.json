@@ -1,6 +1,6 @@
 {
   "name": "@emvu/react-scripts",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Fork of configuration and scripts for Create React App.",
   "repository": "emvu/create-react-app",
   "license": "BSD-3-Clause",
