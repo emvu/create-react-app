@@ -148,11 +148,17 @@ module.exports = {
         test: /\.json$/,
         loader: 'json'
       },
+      { 
+        test: /\.icon\.svg/,
+        exclude: /node_modules/,
+        loader: 'raw!svgo?'+JSON.stringify({plugins: [{minifyStyles: true}]})
+      },
       // "file" loader makes sure those assets get served by WebpackDevServer.
       // When you `import` an asset, you get its (virtual) filename.
       // In production, they would get copied to the `build` folder.
       {
         test: /\.(ico|jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2)(\?.*)?$/,
+        exclude: [/\.icon\.svg/],
         loader: 'file',
         query: {
           name: 'static/media/[name].[hash:8].[ext]'
