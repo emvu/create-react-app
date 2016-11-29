@@ -133,7 +133,8 @@ module.exports = {
           /\.html$/,
           /\.(js|jsx)$/,
           /\.css$/,
-          /\.json$/
+          /\.json$/,
+          /\.icon\.svg/
         ],
         loader: 'url',
         query: {
@@ -182,6 +183,11 @@ module.exports = {
       {
         test: /\.json$/,
         loader: 'json'
+      },
+      { 
+        test: /\.icon\.svg/,
+        exclude: /node_modules/,
+        loader: 'raw!svgo?'+JSON.stringify({plugins: [{minifyStyles: true}]})
       }
     ]
   },
