@@ -15,10 +15,9 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var ManifestPlugin = require('webpack-manifest-plugin');
 var InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
-var url = require('url');
 var paths = require('./paths');
 var getClientEnvironment = require('./env');
-
+var postcssCustomProperties = require("postcss-custom-properties")
 // @remove-on-eject-begin
 // `path` is not used after eject - see https://github.com/facebookincubator/create-react-app/issues/1174
 var path = require('path');
@@ -35,20 +34,13 @@ function ensureSlash(path, needsSlash) {
   }
 }
 
-// We use "homepage" field to infer "public path" at which the app is served.
-// Webpack needs to know it to put the right <script> hrefs into HTML even in
-// single-page apps that may serve index.html for nested URLs like /todos/42.
-// We can't use a relative path in HTML because we don't want to load something
-// like /todos/42/static/js/bundle.7289d.js. We have to know the root.
-var homepagePath = require(paths.appPackageJson).homepage;
-var homepagePathname = homepagePath ? url.parse(homepagePath).pathname : '/';
 // Webpack uses `publicPath` to determine where the app is being served from.
 // It requires a trailing slash, or the file assets will get an incorrect path.
-var publicPath = ensureSlash(homepagePathname, true);
+var publicPath = ensureSlash(paths.servedPath, true);
 // `publicUrl` is just like `publicPath`, but we will provide it to our app
 // as %PUBLIC_URL% in `index.html` and `process.env.PUBLIC_URL` in JavaScript.
-// Omit trailing slash as %PUBLIC_PATH%/xyz looks better than %PUBLIC_PATH%xyz.
-var publicUrl = ensureSlash(homepagePathname, false);
+// Omit trailing slash as %PUBLIC_URL%/xyz looks better than %PUBLIC_URL%xyz.
+var publicUrl = ensureSlash(paths.servedPath, false);
 // Get environment variables to inject into our app.
 var env = getClientEnvironment(publicUrl);
 
@@ -66,7 +58,7 @@ module.exports = {
   bail: true,
   // We generate sourcemaps in production. This is slow but gives good results.
   // You can exclude the *.map files from the build during deployment.
-  devtool: 'source-map',
+  devtool: null, // removed because of: Error: "/components/..." is not in the SourceMap.
   // In production, we only want to load the polyfills and the app code.
   entry: [
     require.resolve('./polyfills'),
@@ -138,7 +130,8 @@ module.exports = {
           /\.(js|jsx)$/,
           /\.css$/,
           /\.json$/,
-          /\.svg$/
+          /\.svg$/,
+          /\.icon\.svg/
         ],
         loader: 'url',
         query: {
@@ -149,11 +142,12 @@ module.exports = {
       // Process JS with Babel.
       {
         test: /\.(js|jsx)$/,
-        include: paths.appSrc,
+        exclude: /node_modules/,
         loader: 'babel',
         // @remove-on-eject-begin
         query: {
           babelrc: false,
+          plugins: [require.resolve('babel-plugin-transform-decorators-legacy')],
           presets: [require.resolve('babel-preset-react-app')],
         },
         // @remove-on-eject-end
@@ -172,8 +166,14 @@ module.exports = {
       // in the main CSS file.
       {
         test: /\.css$/,
+        include: /node_modules/,
         loader: ExtractTextPlugin.extract('style', 'css?importLoaders=1!postcss')
         // Note: this won't work without `new ExtractTextPlugin()` in `plugins`.
+      },
+      {
+        test: /\.css$/,
+        exclude: /node_modules/,
+        loader: ExtractTextPlugin.extract('style', 'css?modules=1&importLoaders=1!postcss')
       },
       // JSON is not enabled by default in Webpack but both Node and Browserify
       // allow it implicitly so we also enable it.
@@ -188,6 +188,11 @@ module.exports = {
         query: {
           name: 'static/media/[name].[hash:8].[ext]'
         }
+      },
+      { 
+        test: /\.icon\.svg/,
+        exclude: /node_modules/,
+        loader: 'raw!svgo?'+JSON.stringify({plugins: [{minifyStyles: true}]})
       }
     ]
   },
@@ -203,6 +208,7 @@ module.exports = {
   // We use PostCSS for autoprefixing only.
   postcss: function() {
     return [
+      postcssCustomProperties,
       autoprefixer({
         browsers: [
           '>1%',
@@ -249,6 +255,7 @@ module.exports = {
     new webpack.optimize.DedupePlugin(),
     // Minify the code.
     new webpack.optimize.UglifyJsPlugin({
+      sourceMap: false,
       compress: {
         screw_ie8: true, // React doesn't support IE8
         warnings: false
