@@ -132,7 +132,8 @@ module.exports = {
           /\.(js|jsx)$/,
           /\.css$/,
           /\.json$/,
-          /\.svg$/
+          /\.svg$/,
+          /\.icon\.svg/
         ],
         loader: 'url',
         query: {
@@ -143,11 +144,12 @@ module.exports = {
       // Process JS with Babel.
       {
         test: /\.(js|jsx)$/,
-        include: paths.appSrc,
+        exclude: /node_modules/,
         loader: 'babel',
         query: {
           // @remove-on-eject-begin
           babelrc: false,
+          plugins: [require.resolve('babel-plugin-transform-decorators-legacy')],
           presets: [require.resolve('babel-preset-react-app')],
           // @remove-on-eject-end
           // This is a feature of `babel-loader` for webpack (not Babel itself).
@@ -163,7 +165,13 @@ module.exports = {
       // in development "style" loader enables hot editing of CSS.
       {
         test: /\.css$/,
+        include: /node_modules/,
         loader: 'style!css?importLoaders=1!postcss'
+      },
+      {
+        test: /\.css$/,
+        exclude: /node_modules/,
+        loader: 'style!css?modules=1&importLoaders=1!postcss'
       },
       // JSON is not enabled by default in Webpack but both Node and Browserify
       // allow it implicitly so we also enable it.
@@ -172,6 +180,11 @@ module.exports = {
         loader: 'json'
       },
       // "file" loader for svg
+      { 
+        test: /\.icon\.svg/,
+        exclude: /node_modules/,
+        loader: 'raw!svgo?'+JSON.stringify({plugins: [{minifyStyles: true}]})
+      },
       {
         test: /\.svg$/,
         loader: 'file',
@@ -191,6 +204,8 @@ module.exports = {
   // We use PostCSS for autoprefixing only.
   postcss: function() {
     return [
+      require('postcss-import'),
+      require('postcss-custom-properties')(),
       autoprefixer({
         browsers: [
           '>1%',
